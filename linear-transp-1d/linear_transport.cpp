@@ -41,6 +41,27 @@ upwindFD(const Eigen::VectorXd &u0,
     auto [xL, xR] = domain;
     double dx = (xR - xL) / (N - 1.0);
 
+    u(0,0)=u0(0);
+    for (int k = 0; k < N; ++k) {
+        u(k+1,0)=u0(k);
+    }
+    u(N+1,0)=u0(N-1);
+
+    for (int i = 1; i < nsteps+1; i++){
+
+        for (int j = 1; j < N+1; j++){
+            double x = xL + dx * j +dx/2;
+            double am = a(x);
+            u(j,i) = ((std::abs(am)*(u(j+1,i-1)-2*u(j,i-1)
+                                       +u(j-1,i-1))-am*(u(j+1,i-1)-u(j-1,i-1)))/(2*dx)
+                     )*dt+u(j,i-1);
+
+        }
+        apply_boundary_conditions(u,i);
+    }
+
+
+
     /* Initialize u */
 // (write your solution here)
 
@@ -49,7 +70,7 @@ upwindFD(const Eigen::VectorXd &u0,
 
     return {std::move(u), std::move(time)};
 }
-//----------------upwindFDEnd----------------
+//--------------upwindFDEnd----------------
 
 //----------------centeredFDBegin----------------
 /// Uses forward Euler and centered finite differences to compute u from time 0
@@ -106,7 +127,7 @@ int main() {
     double xR = 5.0;
     auto domain = std::pair<double, double>{xL, xR};
 
-    auto a = [](double x) { return std::sin(2.0 * M_PI * x); };
+    auto a = [](double x) { return std::sin(2.0 * M_PI * x ); };
 
     Eigen::VectorXd u0(N);
     double h = (xR - xL) / (N - 1.0);
