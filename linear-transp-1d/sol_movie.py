@@ -12,7 +12,7 @@ import re
 try:
 	sol_filename = sys.argv[1]
 except:
-	print "Usage: python sol_movie.py <name of the file containing data for u>"
+	print ("Usage: python sol_movie.py <name of the file containing data for u>")
 	sys.exit()
 
 
@@ -37,13 +37,14 @@ l, = plt.plot([], [], 'k-o')
 
 
 plt.xlim([0,5])
-plt.ylim([amin(u),amax(u)])
+#plt.ylim([-2,10]) #centered
+plt.ylim([amin(u),amax(u)]) #upwind
 plt.xlabel('$x$')
 plt.ylabel('$u(x)$')
 
 
 with writer.saving(fig, sol_filename.replace('.txt','.mp4'), 100):
-    for i in range(0, Nf, int(Nf/100)):
+    for i in range(0, Nf, int(Nf/10)):
         plt.title("T = " + str(t[i]))
         l.set_data(x, u[i,:])
         writer.grab_frame()

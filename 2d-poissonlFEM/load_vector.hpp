@@ -1,5 +1,5 @@
 #pragma once
-#include <Eigen/Core>
+#inclu<Eigen/Core>
 #include <Eigen/Dense>
 #include "coordinate_transform.hpp"
 #include "integrate.hpp"
@@ -31,6 +31,16 @@ void computeLoadVector(Vector& loadVector,
 {
     Eigen::Matrix2d coordinateTransform = makeCoordinateTransform(b - a, c - a);
     double volumeFactor = std::abs(coordinateTransform.determinant());
+    for (int i = 0; i < 3; i++) {
+        auto v = [i,](double x, double y){
+            Eigen::Vector2d Di = gradientLambda(i,x,y);
+            Eigen::Vector2d X;
+            X(0)=x;
+            X(1)=y;
+        };
+
+    }
+    
 // (write your solution here)
 
 }

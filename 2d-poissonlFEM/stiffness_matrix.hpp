@@ -31,6 +31,21 @@ void computeStiffnessMatrix(MatrixType& stiffnessMatrix,
     Eigen::Matrix2d coordinateTransform = makeCoordinateTransform(b - a, c - a);
     double volumeFactor = std::abs(coordinateTransform.determinant());
     Eigen::Matrix2d elementMap = coordinateTransform.inverse().transpose();
+    for (int i=0; i < 3; i++){
+        for (int j = 0; j < 3; j++) {
+            auto ak = [i, j, a, elementMap, coordinateTransform, volumeFactor] (double x, double y) {
+                Eigen::Vector2d Di = gradientLambda(i, x, y);
+                Eigen::Vector2d Dj = gradientLambda(j, x, y);
+                Eigen::Vector2d X;
+                X(0) = x;
+                X(1) = y;
+                return (elementMap *  Di * coordinateTransform.inverse()).transpose() * (X -a) * (elementMap * Dj * coordinateTransform.inverse()).transpose() * (X-a) * volumeFactor;};
+
+            stiffnessMatrix = integrate(ak);
+
+        }
+
+    }
 // (write your solution here)
 
     

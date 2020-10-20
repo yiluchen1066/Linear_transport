@@ -13,6 +13,18 @@
 //! @param x x coordinate in the reference element.
 //! @param y y coordinate in the reference element.
 inline double lambda(int i, double x, double y) {
-// (write your solution here)
-return 0; //remove when implemented
+    double K;
+    switch (i) {
+        case 0:
+            K = 1 - x - y;
+            break;
+        case 1:
+            K = x;
+            break;
+
+        case 2:
+            K = y;
+            break;
+    };
+    return K;
 }

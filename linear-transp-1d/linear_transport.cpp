@@ -47,15 +47,16 @@ upwindFD(const Eigen::VectorXd &u0,
     }
     u(N+1,0)=u0(N-1);
 
-    for (int i = 1; i < nsteps+1; i++){
+    time(0) = 0.0;
 
+    for (int i = 1; i < nsteps+1; i++){
+        time(i) = dt*i;
         for (int j = 1; j < N+1; j++){
-            double x = xL + dx * j +dx/2;
+            double x = xL + dx * j - dx/2;
             double am = a(x);
             u(j,i) = ((std::abs(am)*(u(j+1,i-1)-2*u(j,i-1)
                                        +u(j-1,i-1))-am*(u(j+1,i-1)-u(j-1,i-1)))/(2*dx)
                      )*dt+u(j,i-1);
-
         }
         apply_boundary_conditions(u,i);
     }
@@ -100,6 +101,25 @@ centeredFD(const Eigen::VectorXd &u0,
     auto [xL, xR] = domain;
     double dx = (xR - xL) / (N - 1.0);
 
+    u(0,0)=u0(0);
+    for (int k = 0; k < N; ++k) {
+        u(k+1,0)=u0(k);
+    }
+    u(N+1,0)=u0(N-1);
+    time(0) = 0.0;
+
+    for (int i = 1; i < nsteps+1; i++){
+        time(i) = dt*i;
+        for (int j = 1; j < N+1; j++){
+            double x = xL + dx * j - dx/2;
+            double am = a(x);
+            u(j,i) = -((am*(u(j+1,i)-u(j-1,i)))/(2*dx))*dt+u(j,i-1);
+        }
+        apply_boundary_conditions(u,i);
+    }
+
+
+
     /* Initialize u */
 // (write your solution here)
 
@@ -120,14 +140,14 @@ double ic(double x) {
 
 int main() {
     double T = 2.0;
-    double dt = 0.002; // Change this for timestep comparison
+    double dt = 0.02; // Change this for timestep comparison dt <= 0.05
     int N = 101;
 
     double xL = 0.0;
     double xR = 5.0;
     auto domain = std::pair<double, double>{xL, xR};
 
-    auto a = [](double x) { return std::sin(2.0 * M_PI * x ); };
+    auto a = [](double x) { return  std::sin(2.0 * M_PI * x );};
 
     Eigen::VectorXd u0(N);
     double h = (xR - xL) / (N - 1.0);

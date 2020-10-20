@@ -11,5 +11,17 @@
 //! @param y y coordinate in the reference element.
 inline Eigen::Vector2d gradientLambda(const int i, double x, double y) {
 // (write your solution here)
-    return Eigen::Vector2d(0,0); //remove when implemented
+    Eigen::Vector2d Di;
+    switch (i) {
+        case 0:
+            Di[x,y] = (-1, -1);
+            break;
+        case 1:
+            Di(x,y)= (1,0);
+            break;
+        case 2:
+            Di(x,y) = (0,1);
+            break;
+    }
+    return Eigen::Vector2d Di(x,y); //remove when implemented
 }
